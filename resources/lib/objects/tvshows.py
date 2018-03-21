@@ -4,6 +4,7 @@
 
 import logging
 from ntpath import dirname
+import urllib
 
 import api
 import emby as mb
@@ -31,6 +32,8 @@ class TVShows(Items):
         self.pdialog = pdialog
 
         self.new_time = int(settings('newvideotime'))*1000
+        self.userid = window('emby_currUser')
+        self.server = window('emby_server%s' % self.userid)
 
         Items.__init__(self)
 
@@ -294,8 +297,9 @@ class TVShows(Items):
 
             window('emby_pathverified', value="true")
         else:
-            # Set plugin path
-            toplevelpath = "plugin://plugin.video.emby.tvshows/"
+            #toplevelpath = "plugin://plugin.video.emby.tvshows/"
+            #path = "%s%s/" % (toplevelpath, itemid)
+            toplevelpath = "%s/emby/kodi/tvshows/" % self.server
             path = "%s%s/" % (toplevelpath, itemid)
 
 
@@ -583,6 +587,7 @@ class TVShows(Items):
             window('emby_pathverified', value="true")
         else:
             # Set plugin path and media flags using real filename
+            '''
             path = "plugin://plugin.video.emby.tvshows/%s/" % seriesId
             params = {
 
@@ -592,6 +597,10 @@ class TVShows(Items):
                 'mode': "play"
             }
             filename = urllib_path(path, params)
+            '''
+            #path = playurl.replace(filename, "")
+            path = "%s/emby/kodi/tvshows/%s/" % (self.server, seriesId)
+            filename = "%s/file.strm?%s" % (itemid, urllib.urlencode({'Name': filename.encode('utf-8'), 'KodiId': episodeid}))
 
         ##### UPDATE THE EPISODE #####
         if update_item:
@@ -661,7 +670,7 @@ class TVShows(Items):
         self.kodi_db.add_playstate(fileid, resume, total, playcount, dateplayed)
         if not self.direct_path and resume:
             # Create additional entry for widgets. This is only required for plugin/episode.
-            temppathid = self.kodi_db.get_path("plugin://plugin.video.emby.tvshows/")
+            temppathid = self.kodi_db.get_path("%s/emby/kodi/tvshows/" % self.server)
             tempfileid = self.kodi_db.add_file(filename, temppathid)
             self.kodi_db.update_file(tempfileid, filename, temppathid, dateadded)
             self.kodi_db.add_playstate(tempfileid, resume, total, playcount, dateplayed)
@@ -710,12 +719,12 @@ class TVShows(Items):
             if not self.direct_path and not resume:
                 # Make sure there's no other bookmarks created by widget.
                 filename = self.kodi_db.get_filename(fileid)
-                self.kodi_db.remove_file("plugin://plugin.video.emby.tvshows/", filename)
+                self.kodi_db.remove_file("%s/emby/kodi/tvshows/" % self.server, filename)
 
             if not self.direct_path and resume:
                 # Create additional entry for widgets. This is only required for plugin/episode.
                 filename = self.kodi_db.get_filename(fileid)
-                temppathid = self.kodi_db.get_path("plugin://plugin.video.emby.tvshows/")
+                temppathid = self.kodi_db.get_path("%s/emby/kodi/tvshows/" % self.server)
                 tempfileid = self.kodi_db.add_file(filename, temppathid)
                 self.kodi_db.update_file(tempfileid, filename, temppathid, dateadded)
                 self.kodi_db.add_playstate(tempfileid, resume, total, playcount, dateplayed)

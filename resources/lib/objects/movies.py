@@ -29,6 +29,8 @@ class Movies(Items):
         self.kodi_db = _kodi_movies.KodiMovies(self.kodicursor)
         self.pdialog = pdialog
 
+        self.userid = window('emby_currUser')
+        self.server = window('emby_server%s' % self.userid)
         self.new_time = int(settings('newvideotime'))*1000
 
         Items.__init__(self)
@@ -235,6 +237,7 @@ class Movies(Items):
             window('emby_pathverified', value="true")
         else:
             # Set plugin path and media flags using real filename
+            '''
             path = "plugin://plugin.video.emby.movies/"
             params = {
 
@@ -244,6 +247,9 @@ class Movies(Items):
                 'mode': "play"
             }
             filename = "%s?%s" % (path, urllib.urlencode(params))
+            '''
+            path = "%s/emby/kodi/movies/" % self.server
+            filename = "%s/file.strm?%s" % (itemid, urllib.urlencode({'Name': filename.encode('utf-8'), 'KodiId': movieid}))
 
 
         ##### UPDATE THE MOVIE #####
