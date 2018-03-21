@@ -668,12 +668,14 @@ class TVShows(Items):
         resume = API.adjust_resume(userdata['Resume'])
         total = round(float(runtime), 6)
         self.kodi_db.add_playstate(fileid, resume, total, playcount, dateplayed)
+        '''
         if not self.direct_path and resume:
             # Create additional entry for widgets. This is only required for plugin/episode.
             temppathid = self.kodi_db.get_path("%s/emby/kodi/tvshows/" % self.server)
             tempfileid = self.kodi_db.add_file(filename, temppathid)
             self.kodi_db.update_file(tempfileid, filename, temppathid, dateadded)
             self.kodi_db.add_playstate(tempfileid, resume, total, playcount, dateplayed)
+        '''
 
         return True
 
@@ -721,6 +723,7 @@ class TVShows(Items):
                 filename = self.kodi_db.get_filename(fileid)
                 self.kodi_db.remove_file("%s/emby/kodi/tvshows/" % self.server, filename)
 
+            '''
             if not self.direct_path and resume:
                 # Create additional entry for widgets. This is only required for plugin/episode.
                 filename = self.kodi_db.get_filename(fileid)
@@ -728,6 +731,7 @@ class TVShows(Items):
                 tempfileid = self.kodi_db.add_file(filename, temppathid)
                 self.kodi_db.update_file(tempfileid, filename, temppathid, dateadded)
                 self.kodi_db.add_playstate(tempfileid, resume, total, playcount, dateplayed)
+            '''
 
         emby_db.updateReference(itemid, checksum)
 
