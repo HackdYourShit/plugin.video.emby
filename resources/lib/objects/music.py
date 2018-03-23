@@ -416,10 +416,13 @@ class Music(Items):
             filename = playurl.rsplit("/", 1)[1]
     
         if self.directstream:
-            #path = "%s/emby/Audio/%s/" % (self.server, itemid)
-            #filename = "stream.%s?static=true" % item['MediaSources'][0]['Container']
-            path = "%s/emby/kodi/music/" % self.server
-            filename = "%s/file.strm?%s" % (itemid, urllib.urlencode({'Name': filename.encode('utf-8'), 'KodiId': songid}))
+
+            if self.kodi_version == 17:
+                path = "%s/emby/Audio/%s/" % (self.server, itemid)
+                filename = "stream.%s?static=true" % item['MediaSources'][0]['Container']
+            else: # Kodi Leia
+                path = "%s/emby/kodi/music/" % self.server
+                filename = "%s/file.strm?%s" % (itemid, urllib.urlencode({'Name': filename.encode('utf-8'), 'KodiId': songid}))
         else:
             # Direct paths is set the Kodi way
             if not self.path_validation(playurl):
