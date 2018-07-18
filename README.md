@@ -1,2 +1,2 @@
-# plugin.video.emby.movies
-plugin.video.emby dependency for movies
+# plugin.video.emby.tvshows
+plugin.video.emby dependency for tv shows
